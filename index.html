@@ -3,54 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniShorts</title>
+    <title>MiniShorts - Drama & Reels</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #000; color: #fff; overflow: hidden; }
-        .app-container { width: 100vw; height: 100vh; scroll-snap-type: y mandatory; overflow-y: scroll; scroll-behavior: smooth; }
-        .video-slide { width: 100vw; height: 100vh; scroll-snap-align: start; position: relative; display: flex; justify-content: center; align-items: center; background: linear-gradient(180deg, #ff4081 0%, #000 100%); }
-        .brand-header { position: absolute; top: 20px; left: 20px; font-size: 28px; font-weight: bold; color: #fff; z-index: 10; text-shadow: 2px 2px 10px #ff4081; }
-        .side-bar { position: absolute; right: 15px; bottom: 100px; display: flex; flex-direction: column; gap: 25px; z-index: 10; }
-        .icon { width: 50px; height: 50px; background: rgba(255, 64, 129, 0.3); border: 2px solid #ff4081; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-        .ad-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; display: none; }
-        .ad-box { padding: 30px; background: linear-gradient(135deg, #ff4081, #9c27b0); border-radius: 15px; text-align: center; border: 3px solid #fff; width: 85%; }
-        .ad-timer { font-size: 24px; font-weight: bold; margin-top: 15px; color: #fff; background: #000; padding: 10px; border-radius: 10px; display: inline-block; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root { --bg: #0a0a0a; --text: #fff; --pink: #ff4081; --nav: #121212; --card: #1e1e1e; }
+        .light-theme { --bg: #fff; --text: #000; --nav: #f5f5f5; --card: #e0e0e0; }
+        body { background-color: var(--bg); color: var(--text); overflow: hidden; height: 100vh; }
+        .app-screen { position: fixed; top: 0; left: 0; width: 100vw; height: calc(100vh - 60px); display: none; flex-direction: column; overflow-y: auto; }
+        .active-screen { display: flex; }
+        .brand-header { padding: 15px 20px; font-size: 26px; font-weight: bold; color: var(--pink); display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: sticky; top: 0; z-index: 100; }
+        .theme-btn { background: none; border: none; font-size: 20px; color: var(--text); cursor: pointer; }
+        .auth-container { padding: 30px; display: flex; flex-direction: column; gap: 15px; margin: auto 0; }
+        .auth-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--pink); background: transparent; color: var(--text); }
+        .auth-submit { background: var(--pink); color: #fff; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #reelsFeed { overflow-y: scroll; scroll-snap-type: y mandatory; height: calc(100vh - 60px); }
+        .video-slide { width: 100vw; height: calc(100vh - 60px); scroll-snap-align: start; position: relative; display: flex; justify-content: center; align-items: center; background: linear-gradient(180deg, #2c0b1e 0%, #000 100%); }
+        .side-bar { position: absolute; right: 15px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .icon-btn { width: 50px; height: 50px; background: rgba(255, 64, 129, 0.2); border: 2px solid var(--pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; color: #fff; cursor: pointer; }
+        .icon-lbl { font-size: 11px; color: #ccc; margin-top: -15px; }
+        .drama-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
+        .drama-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,64,129,0.1); cursor: pointer; }
+        .drama-poster { width: 100%; height: 160px; background: linear-gradient(45deg, #ff4081, #311b92); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .drama-info { padding: 10px; }
+        .ep-list { display: flex; gap: 10px; overflow-x: auto; padding: 15px; }
+        .ep-pill { padding: 10px 20px; background: var(--card); border: 1px solid var(--pink); border-radius: 20px; white-space: nowrap; cursor: pointer; }
+        .profile-card { text-align: center; padding: 30px 15px; }
+        .avatar-frame { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--pink); margin: 0 auto 15px; position: relative; overflow: hidden; background: #222; }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        .upload-badge { position: absolute; bottom: 0; width: 100%; background: rgba(255, 64, 129, 0.8); font-size: 10px; padding: 3px 0; cursor: pointer; color: #fff; }
+        .stats-box { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
+        .stat-num { font-size: 22px; font-weight: bold; color: var(--pink); }
+        .stat-txt { font-size: 13px; color: #aaa; }
+        .ad-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.97); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        .ad-box { padding: 35px 25px; background: linear-gradient(135deg, #ff4081, #673ab7); border-radius: 18px; text-align: center; border: 3px solid #fff; width: 85%; max-width: 400px; }
+        .ad-clock { font-size: 26px; font-weight: bold; margin-top: 20px; color: #fff; background: #000; padding: 8px 25px; border-radius: 30px; display: inline-block; border: 1px solid var(--pink); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100vw; height: 60px; background: var(--nav); border-top: 1px solid rgba(255,64,129,0.3); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-tab { background: none; border: none; font-size: 22px; color: var(--text); cursor: pointer; padding: 10px; }
+        .hidden-tunnel { display: none; }
     </style>
 </head>
 <body>
-    <div class="brand-header">MiniShorts</div>
-    <div id="adOverlay" class="ad-overlay"><div class="ad-box"><h2>MiniShorts Ad</h2><p style="margin-top:10px;">Wait 5 seconds to unlock scrolling...</p><div id="timer" class="ad-timer">5</div></div></div>
-    <div class="app-container" id="videoContainer">
-        <div class="video-slide"><h1>🎬 Slide 1</h1><div class="side-bar"><div class="icon">❤️</div><div class="icon">💬</div><div class="icon">🔄</div></div></div>
-        <div class="video-slide"><h1>🎬 Slide 2</h1><div class="side-bar"><div class="icon">❤️</div><div class="icon">💬</div><div class="icon">🔄</div></div></div>
-        <div class="video-slide"><h1>🎬 Slide 3</h1><div class="side-bar"><div class="icon">❤️</div><div class="icon">💬</div><div class="icon">🔄</div></div></div>
-        <div class="video-slide"><h1>🎬 Slide 4</h1><div class="side-bar"><div class="icon">❤️</div><div class="icon">💬</div><div class="icon">🔄</div></div></div>
-        <div class="video-slide"><h1>🎬 Slide 5</h1><div class="side-bar"><div class="icon">❤️</div><div class="icon">💬</div><div class="icon">🔄</div></div></div>
-        <div class="video-slide"><h1>🚀 Slide 6 (Unlocked)</h1><div class="side-bar"><div class="icon">❤️</div><div class="icon">💬</div><div class="icon">🔄</div></div></div>
+    <div class="brand-header"><span>MiniShorts</span><button class="theme-btn" onclick="toggleTheme()">🌙</button></div>
+    <div id="adGate" class="ad-overlay"><div class="ad-box"><h2>MiniShorts Premium Ad</h2><p style="margin-top:10px; color:#eee;">Please wait 5 seconds to unlock scrolling...</p><div id="adClock" class="ad-clock">5</div></div></div>
+    <div id="screenAuth" class="app-screen">
+        <div class="auth-container">
+            <h2 style="text-align: center; color: var(--pink);">Welcome to MiniShorts</h2>
+            <p style="text-align: center; color:#aaa; font-size:14px; margin-bottom: 20px;">Secure Account Dashboard Setup</p>
+            <input type="email" class="auth-input" placeholder="Account Email Address">
+            <input type="password" class="auth-input" placeholder="Secure Password">
+            <button class="auth-submit" onclick="navigate('screenReels')">🔐 Signup / Login</button>
+        </div>
+    </div>
+    <div id="screenReels" class="app-screen active-screen"><div id="reelsFeed"></div></div>
+    <div id="screenDrama" class="app-screen" style="padding-top: 10px;">
+        <h3 style="padding: 0 15px; color: var(--pink);">🔥 Short Drama Section</h3>
+        <div class="drama-grid">
+            <div class="drama-card" onclick="loadEpisodes('Billionaire Husband')"><div class="drama-poster">🎬 Drama 1</div><div class="drama-info"><h5>Billionaire Husband</h5><p style="font-size:11px; color:#aaa;">Season 1 Active</p></div></div>
+            <div class="drama-card" onclick="loadEpisodes('Hidden Secretary')"><div class="drama-poster">🎬 Drama 2</div><div class="drama-info"><h5>Hidden Secretary</h5><p style="font-size:11px; color:#aaa;">New Release</p></div></div>
+        </div>
+        <div id="epSection" style="display:none; margin-top: 20px;">
+            <h4 id="epTitle" style="padding: 0 15px; color: var(--pink);"></h4>
+            <div class="ep-list">
+                <div class="ep-pill" onclick="alert('Playing Ep 1')">📺 Ep 1 (Free)</div>
+                <div class="ep-pill" onclick="alert('Playing Ep 2')">📺 Ep 2 (Free)</div>
+                <div class="ep-pill" onclick="alert('Watch Ad to unlock')">🔒 Ep 3 (Watch Ad)</div>
+            </div>
+        </div>
+    </div>
+    <div id="screenSearch" class="app-screen" style="padding: 20px;"><input type="text" class="auth-input" placeholder="🔍 Search Creators or Spark Tracks..."></div>
+    <div id="screenProfile" class="app-screen">
+        <div class="profile-card">
+            <div class="avatar-frame"><img src="https://placeholder.com" id="myAvatar" class="avatar-img"><label for="avatarIn" class="upload-badge">Change</label></div>
+            <input type="file" id="avatarIn" class="hidden-tunnel" accept="image/*">
+            <h3>@creator_brand</h3>
+            <div class="stats-box">
+                <div class="stat-box"><div class="stat-num">24.8K</div><div class="stat-txt">Fans 👥</div></div>
+                <div class="stat-box"><div class="stat-num">145.2K</div><div class="stat-txt">Spark ✨</div></div>
+            </div>
+            <div style="margin-top: 40px; text-align: left; padding: 0 20px;">
+                <div style="padding: 15px 0; border-bottom:1px solid #333; cursor:pointer;" onclick="alert('Notification active')">🔔 Notifications</div>
+                <div style="padding: 15px 0; border-bottom:1px solid #333; cursor:pointer;" onclick="navigate('screenAuth')">🚪 Account Logout</div>
+            </div>
+        </div>
+    </div>
+    <input type="file" id="videoIn" class="hidden-tunnel" accept="video/*">
+    <div class="bottom-nav">
+        <button class="nav-tab" onclick="navigate('screenReels')">🏠</button>
+        <button class="nav-tab" onclick="navigate('screenDrama')">🎭</button>
+        <button class="nav-tab" onclick="document.getElementById('videoIn').click()">➕</button>
+        <button class="nav-tab" onclick="navigate('screenSearch')">🔍</button>
+        <button class="nav-tab" onclick="navigate('navigateProfile')||navigate('screenProfile')">👤</button>
     </div>
     <script>
-        const container = document.getElementById('videoContainer');
-        const adOverlay = document.getElementById('adOverlay');
-        const timerElement = document.getElementById('timer');
-        let adTriggered = false;
-        container.addEventListener('scroll', () => {
-            let slideIndex = Math.round(container.scrollTop / window.innerHeight);
-            if (slideIndex === 4 && !adTriggered) {
-                adTriggered = true;
-                adOverlay.style.display = 'flex';
-                container.style.overflowY = 'hidden';
-                let timeLeft = 5;
-                let countdown = setInterval(() => {
-                    timeLeft--;
-                    timerElement.innerText = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        adOverlay.style.display = 'none';
-                        container.style.overflowY = 'scroll';
-                    }
-                }, 1000);
-            }
-        });
-    </script>
-</body>
-</html>
+        const screens = ['screenAuth', 'screenReels', 'screenDrama', 'screenSearch', 'screenProfile'];
+        const feed = document.getElementById('reelsFeed');
+        const adGate = document.getElementById('adGate');
+        const adClock = document.getElementById('adClock');
+        let adDone = false, batch = 14;
+        function navigate(id) { screens.forEach(s => document.getElementById(s).classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); }
+        function toggleTheme() { document.body.classList.toggle('light-theme'); document.querySelector('.theme-btn').innerText = document.body.classList.contains('light-theme') ? '☀️' : '🌙'; }
+        function buildFeed() {
+            feed.innerHTML = '';
+            for(let i=1; i<=batch; i++) {
+                let cell = document.createElement('div'); cell.className = 'video-slide';
