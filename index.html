@@ -1,108 +1,92 @@
+<!-- पुराना कोड हटाकर इसे अपनी index.html में पेस्ट करें -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniShorts - Drama & Reels</title>
+    <title>MiniShorts Pro</title>
+    <!-- प्रोफेशनल लुक के लिए Tailwind CSS और FontAwesome का इस्तेमाल -->
+    <script src="https://tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cloudflare.com">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
-        :root { --bg: #0a0a0a; --text: #fff; --pink: #ff4081; --nav: #121212; --card: #1e1e1e; }
-        .light-theme { --bg: #fff; --text: #000; --nav: #f5f5f5; --card: #e0e0e0; }
-        body { background-color: var(--bg); color: var(--text); overflow: hidden; height: 100vh; }
-        .app-screen { position: fixed; top: 0; left: 0; width: 100vw; height: calc(100vh - 60px); display: none; flex-direction: column; overflow-y: auto; }
-        .active-screen { display: flex; }
-        .brand-header { padding: 15px 20px; font-size: 26px; font-weight: bold; color: var(--pink); display: flex; justify-content: space-between; align-items: center; background: var(--bg); position: sticky; top: 0; z-index: 100; }
-        .theme-btn { background: none; border: none; font-size: 20px; color: var(--text); cursor: pointer; }
-        .auth-container { padding: 30px; display: flex; flex-direction: column; gap: 15px; margin: auto 0; }
-        .auth-input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--pink); background: transparent; color: var(--text); }
-        .auth-submit { background: var(--pink); color: #fff; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        #reelsFeed { overflow-y: scroll; scroll-snap-type: y mandatory; height: calc(100vh - 60px); }
-        .video-slide { width: 100vw; height: calc(100vh - 60px); scroll-snap-align: start; position: relative; display: flex; justify-content: center; align-items: center; background: linear-gradient(180deg, #2c0b1e 0%, #000 100%); }
-        .side-bar { position: absolute; right: 15px; bottom: 80px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
-        .icon-btn { width: 50px; height: 50px; background: rgba(255, 64, 129, 0.2); border: 2px solid var(--pink); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; color: #fff; cursor: pointer; }
-        .icon-lbl { font-size: 11px; color: #ccc; margin-top: -15px; }
-        .drama-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
-        .drama-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,64,129,0.1); cursor: pointer; }
-        .drama-poster { width: 100%; height: 160px; background: linear-gradient(45deg, #ff4081, #311b92); display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .drama-info { padding: 10px; }
-        .ep-list { display: flex; gap: 10px; overflow-x: auto; padding: 15px; }
-        .ep-pill { padding: 10px 20px; background: var(--card); border: 1px solid var(--pink); border-radius: 20px; white-space: nowrap; cursor: pointer; }
-        .profile-card { text-align: center; padding: 30px 15px; }
-        .avatar-frame { width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--pink); margin: 0 auto 15px; position: relative; overflow: hidden; background: #222; }
-        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
-        .upload-badge { position: absolute; bottom: 0; width: 100%; background: rgba(255, 64, 129, 0.8); font-size: 10px; padding: 3px 0; cursor: pointer; color: #fff; }
-        .stats-box { display: flex; justify-content: center; gap: 40px; margin-top: 20px; }
-        .stat-num { font-size: 22px; font-weight: bold; color: var(--pink); }
-        .stat-txt { font-size: 13px; color: #aaa; }
-        .ad-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.97); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .ad-box { padding: 35px 25px; background: linear-gradient(135deg, #ff4081, #673ab7); border-radius: 18px; text-align: center; border: 3px solid #fff; width: 85%; max-width: 400px; }
-        .ad-clock { font-size: 26px; font-weight: bold; margin-top: 20px; color: #fff; background: #000; padding: 8px 25px; border-radius: 30px; display: inline-block; border: 1px solid var(--pink); }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100vw; height: 60px; background: var(--nav); border-top: 1px solid rgba(255,64,129,0.3); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-tab { background: none; border: none; font-size: 22px; color: var(--text); cursor: pointer; padding: 10px; }
-        .hidden-tunnel { display: none; }
+        body { background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .video-container { scroll-snap-type: y mandatory; overflow-y: scroll; height: calc(100vh - 60px); }
+        .video-card { scroll-snap-align: start; height: calc(100vh - 60px); position: relative; }
     </style>
 </head>
 <body>
-    <div class="brand-header"><span>MiniShorts</span><button class="theme-btn" onclick="toggleTheme()">🌙</button></div>
-    <div id="adGate" class="ad-overlay"><div class="ad-box"><h2>MiniShorts Premium Ad</h2><p style="margin-top:10px; color:#eee;">Please wait 5 seconds to unlock scrolling...</p><div id="adClock" class="ad-clock">5</div></div></div>
-    <div id="screenAuth" class="app-screen">
-        <div class="auth-container">
-            <h2 style="text-align: center; color: var(--pink);">Welcome to MiniShorts</h2>
-            <p style="text-align: center; color:#aaa; font-size:14px; margin-bottom: 20px;">Secure Account Dashboard Setup</p>
-            <input type="email" class="auth-input" placeholder="Account Email Address">
-            <input type="password" class="auth-input" placeholder="Secure Password">
-            <button class="auth-submit" onclick="navigate('screenReels')">🔐 Signup / Login</button>
-        </div>
+
+    <!-- टॉप बार (Premium Look) -->
+    <div class="fixed top-0 left-0 right-0 h-14 bg-gradient-to-b from-black/80 to-transparent z-50 flex justify-between items-center px-4">
+        <h1 class="text-xl font-bold tracking-wider text-red-600">Mini<span class="text-white">Shorts</span></h1>
+        <i class="fas fa-camera text-xl cursor-pointer"></i>
     </div>
-    <div id="screenReels" class="app-screen active-screen"><div id="reelsFeed"></div></div>
-    <div id="screenDrama" class="app-screen" style="padding-top: 10px;">
-        <h3 style="padding: 0 15px; color: var(--pink);">🔥 Short Drama Section</h3>
-        <div class="drama-grid">
-            <div class="drama-card" onclick="loadEpisodes('Billionaire Husband')"><div class="drama-poster">🎬 Drama 1</div><div class="drama-info"><h5>Billionaire Husband</h5><p style="font-size:11px; color:#aaa;">Season 1 Active</p></div></div>
-            <div class="drama-card" onclick="loadEpisodes('Hidden Secretary')"><div class="drama-poster">🎬 Drama 2</div><div class="drama-info"><h5>Hidden Secretary</h5><p style="font-size:11px; color:#aaa;">New Release</p></div></div>
-        </div>
-        <div id="epSection" style="display:none; margin-top: 20px;">
-            <h4 id="epTitle" style="padding: 0 15px; color: var(--pink);"></h4>
-            <div class="ep-list">
-                <div class="ep-pill" onclick="alert('Playing Ep 1')">📺 Ep 1 (Free)</div>
-                <div class="ep-pill" onclick="alert('Playing Ep 2')">📺 Ep 2 (Free)</div>
-                <div class="ep-pill" onclick="alert('Watch Ad to unlock')">🔒 Ep 3 (Watch Ad)</div>
+
+    <!-- वीडियो फीड एरिया -->
+    <div class="video-container" id="feed">
+        <!-- वीडियो कार्ड 1 -->
+        <div class="video-card flex items-center justify-center bg-zinc-900">
+            <video class="w-full h-full object-cover" loop autoplay muted src="https://mixkit.co"></video>
+            
+            <!-- साइड एक्शन बटन्स (लाइक, कमेंट, शेयर) -->
+            <div class="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-40">
+                <div class="flex flex-col items-center cursor-pointer" onclick="toggleLike(this)">
+                    <i class="fas fa-heart text-2xl text-white transition-colors duration-200"></i>
+                    <span class="text-xs mt-1">1.2K</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer">
+                    <i class="fas fa-comment text-2xl"></i>
+                    <span class="text-xs mt-1">45</span>
+                </div>
+                <div class="flex flex-col items-center cursor-pointer">
+                    <i class="fas fa-share text-2xl"></i>
+                    <span class="text-xs mt-1">Share</span>
+                </div>
+            </div>
+
+            <!-- वीडियो डिटेल्स -->
+            <div class="absolute bottom-4 left-4 right-16 z-40 bg-gradient-to-t from-black/60 to-transparent p-2 rounded">
+                <p class="font-semibold text-sm">@creators_hub</p>
+                <p class="text-xs text-zinc-300 mt-1">Check out this amazing neon vibes! #trending #shorts</p>
             </div>
         </div>
     </div>
-    <div id="screenSearch" class="app-screen" style="padding: 20px;"><input type="text" class="auth-input" placeholder="🔍 Search Creators or Spark Tracks..."></div>
-    <div id="screenProfile" class="app-screen">
-        <div class="profile-card">
-            <div class="avatar-frame"><img src="https://placeholder.com" id="myAvatar" class="avatar-img"><label for="avatarIn" class="upload-badge">Change</label></div>
-            <input type="file" id="avatarIn" class="hidden-tunnel" accept="image/*">
-            <h3>@creator_brand</h3>
-            <div class="stats-box">
-                <div class="stat-box"><div class="stat-num">24.8K</div><div class="stat-txt">Fans 👥</div></div>
-                <div class="stat-box"><div class="stat-num">145.2K</div><div class="stat-txt">Spark ✨</div></div>
-            </div>
-            <div style="margin-top: 40px; text-align: left; padding: 0 20px;">
-                <div style="padding: 15px 0; border-bottom:1px solid #333; cursor:pointer;" onclick="alert('Notification active')">🔔 Notifications</div>
-                <div style="padding: 15px 0; border-bottom:1px solid #333; cursor:pointer;" onclick="navigate('screenAuth')">🚪 Account Logout</div>
-            </div>
-        </div>
+
+    <!-- बॉटम नेविगेशन बार (बिल्कुल YouTube Shorts जैसा प्रोफेशनल) -->
+    <div class="fixed bottom-0 left-0 right-0 h-16 bg-black border-t border-zinc-800 flex justify-around items-center z-50">
+        <button class="flex flex-col items-center text-red-500" onclick="changeTab('home')">
+            <i class="fas fa-home text-lg"></i>
+            <span class="text-[10px] mt-0.5">Home</span>
+        </button>
+        <button class="flex flex-col items-center text-zinc-400" onclick="changeTab('trends')">
+            <i class="fas fa-fire text-lg"></i>
+            <span class="text-[10px] mt-0.5">Trending</span>
+        </button>
+        <button class="flex flex-col items-center bg-white text-black px-4 py-1.5 rounded-full font-bold text-lg hover:scale-105 transition">
+            <i class="fas fa-plus"></i>
+        </button>
+        <button class="flex flex-col items-center text-zinc-400" onclick="changeTab('search')">
+            <i class="fas fa-search text-lg"></i>
+            <span class="text-[10px] mt-0.5">Discover</span>
+        </button>
+        <button class="flex flex-col items-center text-zinc-400" onclick="changeTab('profile')">
+            <i class="fas fa-user text-lg"></i>
+            <span class="text-[10px] mt-0.5">Profile</span>
+        </button>
     </div>
-    <input type="file" id="videoIn" class="hidden-tunnel" accept="video/*">
-    <div class="bottom-nav">
-        <button class="nav-tab" onclick="navigate('screenReels')">🏠</button>
-        <button class="nav-tab" onclick="navigate('screenDrama')">🎭</button>
-        <button class="nav-tab" onclick="document.getElementById('videoIn').click()">➕</button>
-        <button class="nav-tab" onclick="navigate('screenSearch')">🔍</button>
-        <button class="nav-tab" onclick="navigate('navigateProfile')||navigate('screenProfile')">👤</button>
-    </div>
+
+    <!-- बटन्स को वर्किंग बनाने की स्क्रिप्ट -->
     <script>
-        const screens = ['screenAuth', 'screenReels', 'screenDrama', 'screenSearch', 'screenProfile'];
-        const feed = document.getElementById('reelsFeed');
-        const adGate = document.getElementById('adGate');
-        const adClock = document.getElementById('adClock');
-        let adDone = false, batch = 14;
-        function navigate(id) { screens.forEach(s => document.getElementById(s).classList.remove('active-screen')); document.getElementById(id).classList.add('active-screen'); }
-        function toggleTheme() { document.body.classList.toggle('light-theme'); document.querySelector('.theme-btn').innerText = document.body.classList.contains('light-theme') ? '☀️' : '🌙'; }
-        function buildFeed() {
-            feed.innerHTML = '';
-            for(let i=1; i<=batch; i++) {
-                let cell = document.createElement('div'); cell.className = 'video-slide';
+        function toggleLike(element) {
+            const icon = element.querySelector('i');
+            icon.classList.toggle('text-red-500');
+            icon.classList.toggle('text-white');
+        }
+
+        function changeTab(tabName) {
+            alert(tabName.toUpperCase() + " सेक्शन लोड हो रहा है...");
+            // यहाँ हम भविष्य में अलग पेज या डेटा लोड करवा सकते हैं
+        }
+    </script>
+</body>
+</html>
